@@ -1,10 +1,19 @@
 import {maps}  from '../maps/map.js';
 
+document.addEventListener("DOMContentLoaded", () => {
+
+    let layout;
+    const squares = []
     let currentMode = null // "save" или "load"
     let isPaused = false // ствтус игры Stop \ Play
     const urlParams = new URLSearchParams(window.location.search);
     const selectedMap = urlParams.get("map") || "default";
     console.log("Выбранная карта:", selectedMap);
+
+    const scoreDisplay = document.getElementById("score")
+    const width = 28
+    let score = 0
+    const grid = document.querySelector(".grid")
 
     switch (selectedMap) {
         case "map1":
@@ -232,7 +241,7 @@ import {maps}  from '../maps/map.js';
         squares[pacmanCurrentIndex].classList.add("pac-man");
     }
 
-        function movePacman(e) {
+    function movePacman(e) {
         squares[pacmanCurrentIndex].classList.remove("pac-man")
         // switch (e.keyCode) { deprecated
         switch (e.key) {
@@ -396,4 +405,6 @@ import {maps}  from '../maps/map.js';
     window.closeModal = closeModal;
     window.resetSlot = resetSlot;
     window.newGame = newGame;
+    window.createDefaultGameState = createDefaultGameState;
     window.goBack = goBack;
+})
