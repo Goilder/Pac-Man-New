@@ -1,27 +1,27 @@
 import {maps}  from '../maps/map.js';
 
-let currentMode = null // "save" или "load"
-let isPaused = false // ствтус игры Stop \ Play
-const urlParams = new URLSearchParams(window.location.search);
-const selectedMap = urlParams.get("map") || "default";
-console.log("Выбранная карта:", selectedMap);
+    let currentMode = null // "save" или "load"
+    let isPaused = false // ствтус игры Stop \ Play
+    const urlParams = new URLSearchParams(window.location.search);
+    const selectedMap = urlParams.get("map") || "default";
+    console.log("Выбранная карта:", selectedMap);
 
-switch (selectedMap) {
-    case "map1":
-        layout = maps.map_1; // карта 1
-        break;
-    case "map2":
-        layout = maps.map_2; // карта 2
-        break;
-    case "map3":
-        layout = maps.map_3; // карта 3
-        break;
-    case "test":
-        layout = maps.test; // тестовая
-        break;
-    default:
-        layout = maps.map_default; // дефолтная карта
-}
+    switch (selectedMap) {
+        case "map1":
+            layout = maps.map_1; // карта 1
+            break;
+        case "map2":
+            layout = maps.map_2; // карта 2
+            break;
+        case "map3":
+            layout = maps.map_3; // карта 3
+            break;
+        case "test":
+            layout = maps.test; // тестовая
+            break;
+        default:
+            layout = maps.map_default; // дефолтная карта
+    }
 
     class Ghost {
         constructor(className, startIndex, speed) {
@@ -151,86 +151,118 @@ switch (selectedMap) {
         }
 
     }
-function togglePause() {
-    isPaused = !isPaused
 
-    if (isPaused) {
-        document.removeEventListener("keyup", movePacman)
-        ghosts.forEach(ghost => clearInterval(ghost.timerId))
-    } else {
-        document.addEventListener("keyup", movePacman)
-        ghosts.forEach(moveGhost)
-    }
-    
-}
+    function togglePause() {
+        isPaused = !isPaused
 
-function restartGame() {
-    localStorage.removeItem("pacmanSave")
-    location.reload()
-}
-
-function promptSave() {
-    currentMode = "save"
-    document.getElementById("modal-title").innerText = "Сохранить в слот"
-    updateSlotInfo()
-    document.getElementById("save-load-modal").classList.remove("hidden")
-}
-
-function promptLoad() {
-    currentMode = "load"
-    document.getElementById("modal-title").innerText = "Загрузить из слота"
-    updateSlotInfo()
-    document.getElementById("save-load-modal").classList.remove("hidden")
-}
-
-function newGame() {
-    const confirmNew = confirm("Начать новую игру? Текущий прогресс будет удалён.")
-    if (confirmNew) {
-        const defaultState = createDefaultGameState()
-        localStorage.setItem("pacmanSave_slot1", JSON.stringify(defaultState))
-        localStorage.setItem("pacmanLastSlot", 1)
-        location.href = "game.html?map=" + (selectedMap || "default")
-    }
-}
-
-function handleSlot(slot) {
-    if (currentMode === "save") {
-        saveGameState(slot)
-    } else if (currentMode === "load") {
-        loadGameState(slot)
-    }
-    closeModal()
-}
-
-function closeModal() {
-    document.getElementById("save-load-modal").classList.add("hidden")
-    currentMode = null
-}
-
-function resetSlot() {
-    const slot = prompt("Введите номер слота для сброса (1–3):", "1")
-    if (slot && slot >= 1 && slot <= 3) {
-        localStorage.removeItem(`pacmanSave_slot${slot}`)
-        if (localStorage.getItem("pacmanLastSlot") == slot) {
-        localStorage.removeItem("pacmanLastSlot")
+        if (isPaused) {
+            document.removeEventListener("keyup", movePacman)
+            ghosts.forEach(ghost => clearInterval(ghost.timerId))
+        } else {
+            document.addEventListener("keyup", movePacman)
+            ghosts.forEach(moveGhost)
         }
-        alert(`Слот ${slot} сброшен`)
-        updateSlotInfo()
+        
     }
-}
 
-function goBack(){
-    // localStorage.setItem("pacmanSave_slot1", defaultState)
-    // localStorage.setItem("pacmanLastSlot", 1)
-    window.location.href = '/index.html';
-}
+    function restartGame() {
+        localStorage.removeItem("pacmanSave")
+        location.reload()
+    }
 
-window.togglePause = togglePause;
-window.restartGame = restartGame;
-window.promptSave = promptSave;
-window.promptLoad = promptLoad;
-window.handleSlot = handleSlot;
-window.closeModal = closeModal;
-window.resetSlot = resetSlot;
-window.newGame = newGame;
-window.goBack = goBack;
+    function promptSave() {
+        currentMode = "save"
+        document.getElementById("modal-title").innerText = "Сохранить в слот"
+        updateSlotInfo()
+        document.getElementById("save-load-modal").classList.remove("hidden")
+    }
+
+    function promptLoad() {
+        currentMode = "load"
+        document.getElementById("modal-title").innerText = "Загрузить из слота"
+        updateSlotInfo()
+        document.getElementById("save-load-modal").classList.remove("hidden")
+    }
+
+    function newGame() {
+        const confirmNew = confirm("Начать новую игру? Текущий прогресс будет удалён.")
+        if (confirmNew) {
+            const defaultState = createDefaultGameState()
+            localStorage.setItem("pacmanSave_slot1", JSON.stringify(defaultState))
+            localStorage.setItem("pacmanLastSlot", 1)
+            location.href = "game.html?map=" + (selectedMap || "default")
+        }
+    }
+
+    function handleSlot(slot) {
+        if (currentMode === "save") {
+            saveGameState(slot)
+        } else if (currentMode === "load") {
+            loadGameState(slot)
+        }
+        closeModal()
+    }
+
+    function createBoard() {
+        for (let i = 0; i < layout.length; i++) {
+            const square = document.createElement("div")
+            square.id = i
+            grid.appendChild(square)
+            squares.push(square)
+
+            //add layout to the board
+            if (layout[i] === 0) {
+                squares[i].classList.add("pac-dot")
+            }
+            if (layout[i] === 1) {
+                squares[i].classList.add("wall")
+            }
+            if (layout[i] === 2) {
+                squares[i].classList.add("ghost-lair")
+            }
+            if (layout[i] === 3) {
+                squares[i].classList.add("power-pellet")
+            }
+        }
+    }
+    createBoard()
+
+    const lastSlot = localStorage.getItem("pacmanLastSlot");
+    if (lastSlot) {
+        loadGameState(lastSlot);
+    } else {
+        squares[pacmanCurrentIndex].classList.add("pac-man");
+    }
+
+    function closeModal() {
+        document.getElementById("save-load-modal").classList.add("hidden")
+        currentMode = null
+    }
+
+    function resetSlot() {
+        const slot = prompt("Введите номер слота для сброса (1–3):", "1")
+        if (slot && slot >= 1 && slot <= 3) {
+            localStorage.removeItem(`pacmanSave_slot${slot}`)
+            if (localStorage.getItem("pacmanLastSlot") == slot) {
+            localStorage.removeItem("pacmanLastSlot")
+            }
+            alert(`Слот ${slot} сброшен`)
+            updateSlotInfo()
+        }
+    }
+
+    function goBack(){
+        // localStorage.setItem("pacmanSave_slot1", defaultState)
+        // localStorage.setItem("pacmanLastSlot", 1)
+        window.location.href = '/index.html';
+    }
+
+    window.togglePause = togglePause;
+    window.restartGame = restartGame;
+    window.promptSave = promptSave;
+    window.promptLoad = promptLoad;
+    window.handleSlot = handleSlot;
+    window.closeModal = closeModal;
+    window.resetSlot = resetSlot;
+    window.newGame = newGame;
+    window.goBack = goBack;
