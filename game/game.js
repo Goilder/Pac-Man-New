@@ -1,4 +1,4 @@
-
+import {maps}  from '../maps/map.js';
 
 let currentMode = null // "save" или "load"
 let isPaused = false // ствтус игры Stop \ Play
