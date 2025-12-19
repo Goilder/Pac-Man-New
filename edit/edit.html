@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Редактор карты</title>
+  <link rel="stylesheet" href="edit.css">
+</head>
+<body class="body">
+  <h1 class="title-score">Редактор карты (28×28)</h1>
+  <div id="map" class="grid"></div>
+
+  <div class="toolbar">
+    <select class="button" id="tileType">
+      <option value="0">Маленькая еда</option>
+      <option value="1">Стена</option>
+      <option value="2">Призраки</option>
+      <option value="3">Большая точка</option>
+      <option value="4">Пусто</option>
+    </select>
+    <button class="button" onclick="saveMap()">💾 Сохранить</button>
+    <button class="button" onclick="generate()">🎲 Генерация</button>
+    <button class="button" onclick="exportAsJSON()">⬇️ Экспорт JSON</button>
+    <textarea id="output" readonly></textarea>
+  </div>
+
+  <script src="edit.js"></script>
+</body>
+</html>
