@@ -1,45 +1,27 @@
-function saveLastMap(map){
-  localStorage.setItem('map_name', map)
+const { app, BrowserWindow } = require('electron');
+const path = require('path');
+
+function createWindow () {
+  const win = new BrowserWindow({
+    width: 960,
+    height: 720,
+    webPreferences: {
+      contextIsolation: false,
+      nodeIntegration: true
+    }
+  });
+
+  win.loadURL('http://localhost:3000/index.html');
 }
 
-function startNewGame() {
-  console.log('window.location.href');
-  window.location.href = "./game/game.html?map=default";
-  // window.location.href = "asdasd.html";
-}
+app.whenReady().then(() => {
+  createWindow();
 
-function continueGame() {
-  // console.log('window.location.href');
-  // // alert("Функция продолжения пока не реализована.");
-  // const last_map = localStorage.getItem("map_name");
-  // window.location.href = "./game/game.html?map="+last_map
+  app.on('activate', function () {
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  });
+});
 
-  const lastSlot = localStorage.getItem("pacmanLastSlot");
-  if (!lastSlot) {
-    alert("Нет сохранённой игры.");
-    return;
-  }
-
-  const saved = JSON.parse(localStorage.getItem(`pacmanSave_slot${lastSlot}`));
-  if (!saved) {
-    alert("Слот повреждён или пуст.");
-    return;
-  }
-
-  const map = saved.selectedMap || "default";
-  window.location.href = `./game/game.html?map=${map}`;
-}
-
-function openSettings() {
-  // alert("Настройки пока не доступны.");
-  window.location.href = `./edit/edit.html`;
-
-}
-
-function selectMap() {
-  const selectedMap = prompt("Введите имя карты (например: map1, map2, test):", "map2");
-  if (selectedMap) {
-    saveLastMap(selectedMap);
-    window.location.href = `./game/game.html?map=${encodeURIComponent(selectedMap)}`;
-  }
-}
+app.on('window-all-closed', function () {
+  if (process.platform !== 'darwin') app.quit();
+});
