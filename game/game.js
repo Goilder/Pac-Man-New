@@ -77,7 +77,6 @@ import {maps}  from '../maps/map.js';
         }
     }
 
-
     function saveGameState(slot = 1) {
         const ghostStates = ghosts.map(g => ({
             className: g.className,
@@ -210,7 +209,6 @@ import {maps}  from '../maps/map.js';
             grid.appendChild(square)
             squares.push(square)
 
-            //add layout to the board
             if (layout[i] === 0) {
                 squares[i].classList.add("pac-dot")
             }
@@ -322,14 +320,13 @@ import {maps}  from '../maps/map.js';
 
     ghosts.forEach(ghost => squares[ghost.currentIndex].classList.add(ghost.className, "ghost"))
 
-        ghosts.forEach(ghost => moveGhost(ghost))
+    ghosts.forEach(ghost => moveGhost(ghost))
 
     function moveGhost(ghost) {
         const directions = [-1, 1, width, -width]
         let direction = directions[Math.floor(Math.random() * directions.length)]
 
         ghost.timerId = setInterval(function () {
-            //if next square your ghost is going to go to does not have a ghost and does not have a wall
             if (
                 !squares[ghost.currentIndex + direction].classList.contains("ghost") &&
                 !squares[ghost.currentIndex + direction].classList.contains("wall")
@@ -337,14 +334,11 @@ import {maps}  from '../maps/map.js';
                 squares[ghost.currentIndex].classList.remove(ghost.className, "ghost", "scared-ghost")
                 ghost.currentIndex += direction
                 squares[ghost.currentIndex].classList.add(ghost.className, "ghost")
-                // else find a new random direction to go in
             } else direction = directions[Math.floor(Math.random() * directions.length)]
-            // if the ghost is currently scared
             if (ghost.isScared) {
                 squares[ghost.currentIndex].classList.add("scared-ghost")
             }
 
-            //if the ghost is currently scared and pacman is on it
             if (ghost.isScared && squares[ghost.currentIndex].classList.contains("pac-man")) {
                 ghost.isScared = false
                 squares[ghost.currentIndex].classList.remove(ghost.className, "ghost", "scared-ghost")
@@ -355,6 +349,20 @@ import {maps}  from '../maps/map.js';
             }
             checkForGameOver()
         }, ghost.speed)
+    }
+
+    function updateSlotInfo() {
+        for (let i = 1; i <= 3; i++) {
+            const slotData = localStorage.getItem(`pacmanSave_slot${i}`)
+            const infoElement = document.getElementById(`slot-info-${i}`)
+            if (slotData) {
+            const parsed = JSON.parse(slotData)
+            const date = new Date(parsed.timestamp).toLocaleString()
+            infoElement.textContent = `Сохранено: ${date}`
+            } else {
+            infoElement.textContent = "Пусто"
+            }
+        }
     }
 
     function closeModal() {
