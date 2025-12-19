@@ -8,6 +8,28 @@ function startNewGame() {
   // window.location.href = "asdasd.html";
 }
 
+function continueGame() {
+  // console.log('window.location.href');
+  // // alert("Функция продолжения пока не реализована.");
+  // const last_map = localStorage.getItem("map_name");
+  // window.location.href = "./game/game.html?map="+last_map
+
+  const lastSlot = localStorage.getItem("pacmanLastSlot");
+  if (!lastSlot) {
+    alert("Нет сохранённой игры.");
+    return;
+  }
+
+  const saved = JSON.parse(localStorage.getItem(`pacmanSave_slot${lastSlot}`));
+  if (!saved) {
+    alert("Слот повреждён или пуст.");
+    return;
+  }
+
+  const map = saved.selectedMap || "default";
+  window.location.href = `./game/game.html?map=${map}`;
+}
+
 function openSettings() {
   // alert("Настройки пока не доступны.");
   window.location.href = `./edit/edit.html`;
