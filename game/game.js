@@ -1,9 +1,27 @@
 
 
 let currentMode = null // "save" или "load"
+let isPaused = false // ствтус игры Stop \ Play
+const urlParams = new URLSearchParams(window.location.search);
+const selectedMap = urlParams.get("map") || "default";
+console.log("Выбранная карта:", selectedMap);
 
-let isPaused = false
-
+switch (selectedMap) {
+    case "map1":
+        layout = maps.map_1; // карта 1
+        break;
+    case "map2":
+        layout = maps.map_2; // карта 2
+        break;
+    case "map3":
+        layout = maps.map_3; // карта 3
+        break;
+    case "test":
+        layout = maps.test; // тестовая
+        break;
+    default:
+        layout = maps.map_default; // дефолтная карта
+}
 
     class Ghost {
         constructor(className, startIndex, speed) {
